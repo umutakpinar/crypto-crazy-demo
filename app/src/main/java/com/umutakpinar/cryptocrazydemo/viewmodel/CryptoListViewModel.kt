@@ -42,7 +42,7 @@ class CryptoListViewModel @Inject constructor(
             }
 
             val results = listToSearch.filter {
-                it.currency.contains(query.trim(),true)
+                it.currency.contains(query.trim(), ignoreCase = true)
             }
 
             if(isSearhStarting){
@@ -55,8 +55,9 @@ class CryptoListViewModel @Inject constructor(
     }
 
     fun loadCryptos(){
-        isLoadig.value = true
+        //isLoadig.value = true
         viewModelScope.launch {
+            isLoadig.value = true
             val result = repository.getCryptoList()
 
             when(result){
@@ -64,14 +65,14 @@ class CryptoListViewModel @Inject constructor(
                     val cryptoItems = result.data!!.mapIndexed { index, cryptoListItem ->
                         CryptoListItem(cryptoListItem.currency,cryptoListItem.price)
                     }
-                    isLoadig.value = false
                     errorMessage.value = ""
+                    isLoadig.value = false
                     cryptoList.value += cryptoItems
                 }
 
                 is Resource.Error -> {
-                    isLoadig.value = false
                     errorMessage.value = result.message!!
+                    isLoadig.value = false
                 }
             }
         }
